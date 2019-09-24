@@ -1,7 +1,37 @@
 .App {
-  
   padding-top: 6rem;
   min-height: 100vh;
+}
+
+@media only screen and (max-width: 872px) {
+  .App {
+    padding-top: 8rem;
+  }
+}
+
+.attribute-column-1,
+.attribute-column-2,
+.attribute-column-3 {
+  display: none;
+}
+
+@media only screen and (min-width: 995px) {
+  .attribute-column-1 {
+    float: left;
+    display: block;
+  }
+
+  .attribute-column-2 {
+    float: right;
+    display: block;
+  }
+}
+
+@media only screen and (max-width: 994px) {
+  .attribute-column-3 {
+    float: left;
+    display: block;
+  }
 }
 
 .navbar {

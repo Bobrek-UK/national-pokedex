@@ -23,7 +23,7 @@ const TYPE_COLORS = {
   water: "3295F6"
 };
 
-export default class Pokemon extends Component {
+export default class PokemonScroll extends Component {
   state = {
     name: "",
     pokemonIndex: "",
@@ -609,7 +609,7 @@ export default class Pokemon extends Component {
                 <div className="row align-items-center mt-3">
                   {this.state.previousIndex > 0 ? (
                     <Link
-                      to={`/pokemonScroll/${this.state.previousIndex}`}
+                      to={`/pokemon/${this.state.previousIndex}`}
                       className="mx-auto compare-button"
                     >
                       View Previous Pokemon
@@ -617,7 +617,7 @@ export default class Pokemon extends Component {
                   ) : null}
                   {this.state.nextIndex < 808 ? (
                     <Link
-                      to={`/pokemonScroll/${this.state.nextIndex}`}
+                      to={`/pokemon/${this.state.nextIndex}`}
                       className="mx-auto compare-button"
                     >
                       View Next Pokemon

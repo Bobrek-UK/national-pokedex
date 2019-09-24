@@ -13,31 +13,30 @@ code {
 }
 
 .wrapper {
-   position:relative;
+  position: relative;
 }
 
 .internal-bar {
-    position:absolute;
-    
+  position: absolute;
 }
 
 .stat-bar {
-  position:absolute;
-  padding:0px;
-  width:4px;
-  height:100%;
-  right:0px;
-  background-color:black;
+  position: absolute;
+  padding: 0px;
+  width: 4px;
+  height: 100%;
+  right: 0px;
+  background-color: black;
   border-left: 1px solid white;
   border-right: 1px solid white;
 }
 
-.stat-difference{
-  position:absolute;
-  
-  height:100%;
-  right:5px;
-  top:0px;
+.stat-difference {
+  position: absolute;
+
+  height: 100%;
+  right: 5px;
+  top: 0px;
   font-weight: bold;
 }
 
@@ -45,57 +44,61 @@ code {
   border-radius: 10px;
   margin-top: 2px;
   margin-bottom: 2px;
-  padding-left:5px;
-  padding-right:5px;
-  border:1px solid white;
+  padding-left: 5px;
+  padding-right: 5px;
+  border: 1px solid white;
   font-size: 13px !important;
   margin-right: 5px !important;
 }
 
 .dex:hover {
-  background-color:white;
-  color:red !important;
+  background-color: white;
+  color: red !important;
 }
 
 .plus-stat {
-  color:green;
+  color: green;
 }
 
 .minus-stat {
-  color:red;
+  color: red;
 }
 
 .compare-button {
   border: 1px solid #ef5350;
-  border-radius:10px;
+  border-radius: 10px;
   padding: 5px;
-  font-weight:bold;
-  color:white;
-  background-color:#ef5350;
-}
-
-.compare-button:hover{
-  text-decoration: none !important;
-  background-color:red;
-  color:white;
-  
-}
-
-.favourite-button{
+  font-weight: bold;
+  color: white;
   background-color: #ef5350;
-  border-radius:10px;
+}
+
+.compare-button:hover {
+  text-decoration: none !important;
+  background-color: red;
+  color: white;
+}
+
+.favourite-button {
+  background-color: #ef5350;
+  border-radius: 10px;
   padding: 5px;
   border: 1px solid white;
-  color:white;
-  font-weight:bold;
+  color: white;
+  font-weight: bold;
 }
 
-.favourite-button:hover{
+.favourite-button:hover {
   text-decoration: none !important;
-  background-color:red;
-  color:white;
+  background-color: red;
+  color: white;
 }
 
-.favourite-button:focus{
-  outline-width:0;
+.favourite-button:focus {
+  outline-width: 0;
+}
+
+.favourites-header {
+  width: 100% !important;
+  height: 100px;
 }

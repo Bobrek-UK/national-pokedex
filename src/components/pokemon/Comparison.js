@@ -72,7 +72,9 @@ export default class Comparison extends Component {
     const oneImageUrl = onePokemonRes.data.sprites.front_default;
     const oneTypes = onePokemonRes.data.types.map(type => type.type.name);
     //this returns the dex number of the pokemon if the comparison was done by the user entering the pokemon's name rather than dex number
-    const twoPokemonIndexToNumber = twoPokemonRes.data.species.url.replace(/[^0-9]/g, '').substring(1);
+    const twoPokemonIndexToNumber = twoPokemonRes.data.species.url
+      .replace(/[^0-9]/g, "")
+      .substring(1);
 
     let {
       oneHp,
@@ -173,708 +175,859 @@ export default class Comparison extends Component {
   }
 
   render() {
-    if (this.state.twoName != "")
-    {
-    return (
-      
-      <div className="col">
-        {/*Start of card for first pokemon */}
-        
-        <div className="card">
-          <div className="card-header">
-            <div className="row">
-              <h3 className="mx-auto">
-                {this.state.onePokemonIndex.length == 1
-                  ? "00" + this.state.onePokemonIndex
-                  : this.state.onePokemonIndex.length == 2
-                  ? "0" + this.state.onePokemonIndex
-                  : this.state.onePokemonIndex}
-                :{" "}
-                {this.state.oneName
-                  .toLowerCase()
-                  .split(" ")
-                  .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                  .join(" ")}
-              </h3>
+    if (this.state.twoName != "") {
+      return (
+        <div className="col">
+          {/*Start of card for first pokemon */}
 
-              {this.state.oneTypes.map(type => (
-                <span
-                  key={type}
-                  className="badge badge-primary badge-pill mr-2 float-right"
+          <div className="card">
+            <div className="card-header">
+              <div className="row">
+                <h3 className="mx-auto">
+                  {this.state.onePokemonIndex.length == 1
+                    ? "00" + this.state.onePokemonIndex
+                    : this.state.onePokemonIndex.length == 2
+                    ? "0" + this.state.onePokemonIndex
+                    : this.state.onePokemonIndex}
+                  :{" "}
+                  {this.state.oneName
+                    .toLowerCase()
+                    .split(" ")
+                    .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                    .join(" ")}
+                </h3>
+
+                {this.state.oneTypes.map(type => (
+                  <span
+                    key={type}
+                    className="badge badge-primary badge-pill mr-2 float-right"
+                    style={{
+                      backgroundColor: `#${TYPE_COLORS[type]}`,
+                      color: "white",
+                      width: "100px",
+                      paddingTop: "6px"
+                    }}
+                  >
+                    <h5>
+                      {type.charAt(0).toUpperCase() +
+                        type.substring(1).toLowerCase()}
+                    </h5>
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="card-body">
+              <div className="row align-items-top">
+                <div
+                  className="col-3"
                   style={{
-                    backgroundColor: `#${TYPE_COLORS[type]}`,
-                    color: "white",
-                    width: "100px",
-                    paddingTop: "6px"
+                    borderRight: "1px solid #c2c2c2"
                   }}
                 >
-                  <h5>
-                    {type.charAt(0).toUpperCase() +
-                      type.substring(1).toLowerCase()}
-                  </h5>
-                </span>
-              ))}
+                  <img
+                    src={this.state.oneImageUrl}
+                    className="card-img-top rounded mx-auto mt-2"
+                  ></img>
+                </div>
+
+                <div className="col-9">
+                  <div className="text-center mx-auto mb-4">
+                    <h4 className="mx-auto">
+                      Base stats for{" "}
+                      {this.state.oneName
+                        .toLowerCase()
+                        .split(" ")
+                        .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                        .join(" ")}
+                    </h4>
+                  </div>
+
+                  {/*HP stats. Max current stat is 255 so hp value percentage is 
+                   calculated from that maximum */}
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      HP
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneHp / 255) *
+                              100}%`,
+                            backgroundColor: "green"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.oneStats.oneHp}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoHp / 255) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                            //borderRight: "2px solid grey" (This adds width to stat making it wrong so this was replaced with stat-bar div)
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.oneStats.oneHp -
+                            this.state.twoStats.twoHp >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.oneStats
+                              .oneHp - this.state.twoStats.twoHp}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.oneStats.oneHp -
+                                this.state.twoStats.twoHp}
+                            </span>
+                          )}{" "}
+                          HP
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Attack stat. Max current stat is 180 so attack value percentage is 
+                   calculated from that maximum */}
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Attack
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneAttack / 180) *
+                              100}%`,
+                            backgroundColor: "red"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.oneStats.oneAttack}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoAttack / 180) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.oneStats.oneAttack -
+                            this.state.twoStats.twoAttack >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.oneStats
+                              .oneAttack -
+                              this.state.twoStats.twoAttack}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.oneStats.oneAttack -
+                                this.state.twoStats.twoAttack}
+                            </span>
+                          )}{" "}
+                          Att
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Defense stat. Max current stat is 230 so defense value percentage is 
+                   calculated from that maximum */}
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Defense
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneDefense / 230) *
+                              100}%`,
+                            backgroundColor: "darkOrange"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.oneStats.oneDefense}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoDefense / 230) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.oneStats.oneDefense -
+                            this.state.twoStats.twoDefense >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.oneStats
+                              .oneDefense -
+                              this.state.twoStats.twoDefense}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.oneStats.oneDefense -
+                                this.state.twoStats.twoDefense}
+                            </span>
+                          )}{" "}
+                          Def
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Special attack stat. Max current stat is 180 so Special attack value percentage is 
+                   calculated from that maximum */}
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Special Attack
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneSpecialAttack /
+                              180) *
+                              100}%`,
+                            backgroundColor: "purple"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.oneStats.oneSpecialAttack}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoSpecialAttack /
+                              180) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.oneStats.oneSpecialAttack -
+                            this.state.twoStats.twoSpecialAttack >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.oneStats
+                              .oneSpecialAttack -
+                              this.state.twoStats.twoSpecialAttack}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.oneStats.oneSpecialAttack -
+                                this.state.twoStats.twoSpecialAttack}
+                            </span>
+                          )}{" "}
+                          SA
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Special defense stat. Max current stat is 230 so special defense value percentage is 
+                   calculated from that maximum */}
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Special Defense
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneSpecialDefense /
+                              230) *
+                              100}%`,
+                            backgroundColor: "#CC3999"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.oneStats.oneSpecialDefense}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoSpecialDefense /
+                              230) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.oneStats.oneSpecialDefense -
+                            this.state.twoStats.twoSpecialDefense >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.oneStats
+                              .oneSpecialDefense -
+                              this.state.twoStats.twoSpecialDefense}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.oneStats.oneSpecialDefense -
+                                this.state.twoStats.twoSpecialDefense}
+                            </span>
+                          )}{" "}
+                          SD
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/*Speed stat. Max current stat is 180 so speed value percentage is 
+                   calculated from that maximum */}
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Speed
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneSpeed / 180) *
+                              100}%`,
+                            backgroundColor: "darkBlue"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.oneStats.oneSpeed}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoSpeed / 180) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.oneStats.oneSpeed -
+                            this.state.twoStats.twoSpeed >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.oneStats
+                              .oneSpeed - this.state.twoStats.twoSpeed}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.oneStats.oneSpeed -
+                                this.state.twoStats.twoSpeed}
+                            </span>
+                          )}{" "}
+                          Spe
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row align-items-center mt-3">
+                    <Link
+                      to={`/pokemon/${this.state.onePokemonIndex}`}
+                      className="mx-auto"
+                    >
+                      View more information for{" "}
+                      {this.state.oneName
+                        .toLowerCase()
+                        .split(" ")
+                        .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                        .join(" ")}{" "}
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="card-body">
-            <div className="row align-items-top">
-              <div
-                className="col-3"
-                style={{
-                  borderRight: "1px solid #c2c2c2"
-                }}
-              >
-                <img
-                  src={this.state.oneImageUrl}
-                  className="card-img-top rounded mx-auto mt-2"
-                ></img>
+
+          {/*Start of card for Second pokemon */}
+          <div className="card mt-3">
+            <div className="card-header">
+              <div className="row">
+                <h3 className="mx-auto">
+                  {this.state.twoPokemonIndexToNumber.length == 1
+                    ? "00" + this.state.twoPokemonIndexToNumber
+                    : this.state.twoPokemonIndexToNumber.length == 2
+                    ? "0" + this.state.twoPokemonIndexToNumber
+                    : this.state.twoPokemonIndexToNumber}
+                  :{" "}
+                  {this.state.twoName
+                    .toLowerCase()
+                    .split(" ")
+                    .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                    .join(" ")}
+                </h3>
+
+                {this.state.twoTypes.map(type => (
+                  <span
+                    key={type}
+                    className="badge badge-primary badge-pill mr-2 float-right"
+                    style={{
+                      backgroundColor: `#${TYPE_COLORS[type]}`,
+                      color: "white",
+                      width: "100px",
+                      paddingTop: "6px"
+                    }}
+                  >
+                    <h5>
+                      {type.charAt(0).toUpperCase() +
+                        type.substring(1).toLowerCase()}
+                    </h5>
+                  </span>
+                ))}
               </div>
-
-              <div className="col-9">
-                <div className="text-center mx-auto mb-4">
-                  <h4 className="mx-auto">
-                    Base stats for{" "}
-                    {this.state.oneName
-                      .toLowerCase()
-                      .split(" ")
-                      .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")}
-                  </h4>
+            </div>
+            <div className="card-body">
+              <div className="row align-items-top">
+                <div
+                  className="col-3"
+                  style={{
+                    borderRight: "1px solid #c2c2c2"
+                  }}
+                >
+                  <img
+                    src={this.state.twoImageUrl}
+                    className="card-img-top rounded mx-auto mt-2"
+                  ></img>
                 </div>
 
-                {/*HP stats. Max current stat is 255 so hp value percentage is 
+                <div className="col-9">
+                  <div className="text-center mx-auto mb-4">
+                    <h4 className="mx-auto">
+                      Base stats for{" "}
+                      {this.state.twoName
+                        .toLowerCase()
+                        .split(" ")
+                        .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                        .join(" ")}
+                    </h4>
+                  </div>
+
+                  {/*HP stats. Max current stat is 255 so hp value percentage is 
                    calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">HP</div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneHp / 255) * 100}%`,
-                          backgroundColor: "green"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.oneStats.oneHp}</small>
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      HP
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoHp / 255) *
+                              100}%`,
+                            backgroundColor: "green"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.twoStats.twoHp}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneHp / 255) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                            //borderRight: "2px solid grey" (This adds width to stat making it wrong)
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.twoStats.twoHp -
+                            this.state.oneStats.oneHp >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.twoStats
+                              .twoHp - this.state.oneStats.oneHp}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.twoStats.twoHp -
+                                this.state.oneStats.oneHp}
+                            </span>
+                          )}{" "}
+                          HP
+                        </small>
                       </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoHp / 255) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                          //borderRight: "2px solid grey" (This adds width to stat making it wrong so this was replaced with stat-bar div)
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100" 
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                        
-                      </div>
-                      <small className="stat-difference">{this.state.oneStats.oneHp-this.state.twoStats.twoHp >= 0 ?
-                       (<span className="plus-stat">{`+${this.state.oneStats.oneHp-this.state.twoStats.twoHp}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.oneStats.oneHp-this.state.twoStats.twoHp}</span>)} HP</small>
                     </div>
                   </div>
-                </div>
 
-                {/*Attack stat. Max current stat is 180 so attack value percentage is 
+                  {/*Attack stat. Max current stat is 180 so attack value percentage is 
                    calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Attack
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneAttack / 180) *
-                            100}%`,
-                          backgroundColor: "red"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.oneStats.oneAttack}</small>
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Attack
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoAttack / 180) *
+                              100}%`,
+                            backgroundColor: "red"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.twoStats.twoAttack}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneAttack / 180) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.twoStats.twoAttack -
+                            this.state.oneStats.oneAttack >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.twoStats
+                              .twoAttack -
+                              this.state.oneStats.oneAttack}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.twoStats.twoAttack -
+                                this.state.oneStats.oneAttack}
+                            </span>
+                          )}{" "}
+                          Att
+                        </small>
                       </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoAttack / 180) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.oneStats.oneAttack-this.state.twoStats.twoAttack >= 0 ? (<span className="plus-stat">{`+${this.state.oneStats.oneAttack-this.state.twoStats.twoAttack}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.oneStats.oneAttack-this.state.twoStats.twoAttack}</span>)} Att</small>
                     </div>
                   </div>
-                </div>
 
-                {/*Defense stat. Max current stat is 230 so defense value percentage is 
+                  {/*Defense stat. Max current stat is 230 so defense value percentage is 
                    calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Defense
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneDefense / 230) *
-                            100}%`,
-                          backgroundColor: "darkOrange"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.oneStats.oneDefense}</small>
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Defense
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoDefense / 230) *
+                              100}%`,
+                            backgroundColor: "darkOrange"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.twoStats.twoDefense}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneDefense / 230) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.twoStats.twoDefense -
+                            this.state.oneStats.oneDefense >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.twoStats
+                              .twoDefense -
+                              this.state.oneStats.oneDefense}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.twoStats.twoDefense -
+                                this.state.oneStats.oneDefense}
+                            </span>
+                          )}{" "}
+                          Def
+                        </small>
                       </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoDefense / 230) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.oneStats.oneDefense-this.state.twoStats.twoDefense >= 0 ? 
-                                                    (<span className="plus-stat">{`+${this.state.oneStats.oneDefense-this.state.twoStats.twoDefense}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.oneStats.oneDefense-this.state.twoStats.twoDefense}</span>)} Def</small>
                     </div>
                   </div>
-                </div>
 
-                {/*Special attack stat. Max current stat is 180 so Special attack value percentage is 
+                  {/*Special attack stat. Max current stat is 180 so Special attack value percentage is 
                    calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Special Attack
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneSpecialAttack /
-                            180) *
-                            100}%`,
-                          backgroundColor: "purple"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.oneStats.oneSpecialAttack}</small>
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Special Attack
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoSpecialAttack /
+                              180) *
+                              100}%`,
+                            backgroundColor: "purple"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.twoStats.twoSpecialAttack}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneSpecialAttack /
+                              180) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.twoStats.twoSpecialAttack -
+                            this.state.oneStats.oneSpecialAttack >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.twoStats
+                              .twoSpecialAttack -
+                              this.state.oneStats.oneSpecialAttack}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.twoStats.twoSpecialAttack -
+                                this.state.oneStats.oneSpecialAttack}
+                            </span>
+                          )}{" "}
+                          SA
+                        </small>
                       </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoSpecialAttack / 180) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.oneStats.oneSpecialAttack-this.state.twoStats.twoSpecialAttack >= 0 ? 
-                                                           (<span className="plus-stat">{`+${this.state.oneStats.oneSpecialAttack-this.state.twoStats.twoSpecialAttack}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.oneStats.oneSpecialAttack-this.state.twoStats.twoSpecialAttack}</span>)} SA</small>
                     </div>
                   </div>
-                </div>
 
-                {/*Special defense stat. Max current stat is 230 so special defense value percentage is 
+                  {/*Special defense stat. Max current stat is 230 so special defense value percentage is 
                    calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Special Defense
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneSpecialDefense /
-                            230) *
-                            100}%`,
-                          backgroundColor: "#CC3999"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.oneStats.oneSpecialDefense}</small>
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Special Defense
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoSpecialDefense /
+                              230) *
+                              100}%`,
+                            backgroundColor: "#CC3999"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.twoStats.twoSpecialDefense}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneSpecialDefense /
+                              230) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.twoStats.twoSpecialDefense -
+                            this.state.oneStats.oneSpecialDefense >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.twoStats
+                              .twoSpecialDefense -
+                              this.state.oneStats.oneSpecialDefense}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.twoStats.twoSpecialDefense -
+                                this.state.oneStats.oneSpecialDefense}
+                            </span>
+                          )}{" "}
+                          SD
+                        </small>
                       </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoSpecialDefense / 230) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.oneStats.oneSpecialDefense-this.state.twoStats.twoSpecialDefense >= 0 ? 
-                                                          (<span className="plus-stat">{`+${this.state.oneStats.oneSpecialDefense-this.state.twoStats.twoSpecialDefense}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.oneStats.oneSpecialDefense-this.state.twoStats.twoSpecialDefense}</span>)} SD</small>
                     </div>
                   </div>
-                </div>
 
-                {/*Speed stat. Max current stat is 180 so speed value percentage is 
+                  {/*Speed stat. Max current stat is 180 so speed value percentage is 
                    calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Speed
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneSpeed / 180) *
-                            100}%`,
-                          backgroundColor: "darkBlue"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.oneStats.oneSpeed}</small>
+                  <div className="row align-items-center">
+                    <div className="col-12 col-md-4 col-sm-6 text-right">
+                      Speed
+                    </div>
+                    <div className="col-12 col-md-8 col-sm-6">
+                      <div className="progress wrapper">
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.twoStats.twoSpeed / 180) *
+                              100}%`,
+                            backgroundColor: "darkBlue"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small>{this.state.twoStats.twoSpeed}</small>
+                        </div>
+                        <div
+                          className="progress-bar internal-bar"
+                          role="progressBar"
+                          style={{
+                            width: `${(this.state.oneStats.oneSpeed / 180) *
+                              100}%`,
+                            backgroundColor: "transparent"
+                          }}
+                          aria-valuenow="25"
+                          aria-valuemin="0"
+                          aria-valuemax="100"
+                        >
+                          <small style={{ color: "transparent" }}>.</small>
+                          <div className="stat-bar"></div>
+                        </div>
+                        <small className="stat-difference">
+                          {this.state.twoStats.twoSpeed -
+                            this.state.oneStats.oneSpeed >=
+                          0 ? (
+                            <span className="plus-stat">{`+${this.state.twoStats
+                              .twoSpeed - this.state.oneStats.oneSpeed}`}</span>
+                          ) : (
+                            <span className="minus-stat">
+                              {this.state.twoStats.twoSpeed -
+                                this.state.oneStats.oneSpeed}
+                            </span>
+                          )}{" "}
+                          Spe
+                        </small>
                       </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoSpeed / 180) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">
-                      {this.state.oneStats.oneSpeed-this.state.twoStats.twoSpeed >= 0 ? (<span className="plus-stat">{`+${this.state.oneStats.oneSpeed-this.state.twoStats.twoSpeed}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.oneStats.oneSpeed-this.state.twoStats.twoSpeed}</span>)} Spe</small>
                     </div>
                   </div>
-                </div>
-                <div className="row align-items-center mt-3">
-                  <Link to={`/pokemon/${this.state.onePokemonIndex}`} className="mx-auto">
-                    View more information for {" "}
-                    {this.state.oneName
-                      .toLowerCase()
-                      .split(" ")
-                      .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")}{" "}
-                    
-                  </Link>
+                  <div className="row align-items-center mt-3">
+                    <Link
+                      to={`/pokemon/${this.state.twoPokemonIndex}`}
+                      className="mx-auto"
+                    >
+                      View more information for{" "}
+                      {this.state.twoName
+                        .toLowerCase()
+                        .split(" ")
+                        .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+                        .join(" ")}{" "}
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-
-        {/*Start of card for Second pokemon */}
-        <div className="card mt-3">
-          <div className="card-header">
-            <div className="row">
-              <h3 className="mx-auto">
-                {this.state.twoPokemonIndexToNumber.length == 1
-                  ? "00" + this.state.twoPokemonIndexToNumber
-                  : this.state.twoPokemonIndexToNumber.length == 2
-                  ? "0" + this.state.twoPokemonIndexToNumber
-                  : this.state.twoPokemonIndexToNumber}
-                :{" "}
-                {this.state.twoName
-                  .toLowerCase()
-                  .split(" ")
-                  .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                  .join(" ")}
-              </h3>
-
-              {this.state.twoTypes.map(type => (
-                <span
-                  key={type}
-                  className="badge badge-primary badge-pill mr-2 float-right"
-                  style={{
-                    backgroundColor: `#${TYPE_COLORS[type]}`,
-                    color: "white",
-                    width: "100px",
-                    paddingTop: "6px"
-                  }}
-                >
-                  <h5>
-                    {type.charAt(0).toUpperCase() +
-                      type.substring(1).toLowerCase()}
-                  </h5>
-                </span>
-              ))}
-            </div>
+      );
+    } else
+      return (
+        <div className="text-center">
+          <div>
+            The Pokemon for comparison was not found. Please ensure the spelling
+            or dex number is correct
           </div>
-          <div className="card-body">
-            <div className="row align-items-top">
-              <div
-                className="col-3"
-                style={{
-                  borderRight: "1px solid #c2c2c2"
-                }}
-              >
-                <img
-                  src={this.state.twoImageUrl}
-                  className="card-img-top rounded mx-auto mt-2"
-                ></img>
-              </div>
-
-              <div className="col-9">
-                <div className="text-center mx-auto mb-4">
-                  <h4 className="mx-auto">
-                    Base stats for{" "}
-                    {this.state.twoName
-                      .toLowerCase()
-                      .split(" ")
-                      .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")}
-                  </h4>
-                </div>
-
-                {/*HP stats. Max current stat is 255 so hp value percentage is 
-                   calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">HP</div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoHp / 255) * 100}%`,
-                          backgroundColor: "green"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.twoStats.twoHp}</small>
-                      </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneHp / 255) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                          //borderRight: "2px solid grey" (This adds width to stat making it wrong)
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100" 
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.twoStats.twoHp-this.state.oneStats.oneHp >= 0 ? 
-                        (<span className = "plus-stat">{`+${this.state.twoStats.twoHp-this.state.oneStats.oneHp}`}</span>)
-                                                         : (<span className = "minus-stat">{this.state.twoStats.twoHp-this.state.oneStats.oneHp}</span>)} HP</small>
-                    </div>
-                  </div>
-                </div>
-
-                {/*Attack stat. Max current stat is 180 so attack value percentage is 
-                   calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Attack
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoAttack / 180) *
-                            100}%`,
-                          backgroundColor: "red"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.twoStats.twoAttack}</small>
-                      </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneAttack / 180) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.twoStats.twoAttack-this.state.oneStats.oneAttack >= 0 ? 
-                      (<span className="plus-stat">{`+${this.state.twoStats.twoAttack-this.state.oneStats.oneAttack}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.twoStats.twoAttack-this.state.oneStats.oneAttack}</span>)} Att</small>
-                    </div>
-                  </div>
-                </div>
-
-                {/*Defense stat. Max current stat is 230 so defense value percentage is 
-                   calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Defense
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoDefense / 230) *
-                            100}%`,
-                          backgroundColor: "darkOrange"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.twoStats.twoDefense}</small>
-                      </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneDefense / 230) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.twoStats.twoDefense-this.state.oneStats.oneDefense >= 0 ?
-                       (<span className="plus-stat">{`+${this.state.twoStats.twoDefense-this.state.oneStats.oneDefense}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.twoStats.twoDefense-this.state.oneStats.oneDefense}</span>)} Def</small>
-                    </div>
-                  </div>
-                </div>
-
-                {/*Special attack stat. Max current stat is 180 so Special attack value percentage is 
-                   calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Special Attack
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoSpecialAttack /
-                            180) *
-                            100}%`,
-                          backgroundColor: "purple"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.twoStats.twoSpecialAttack}</small>
-                      </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneSpecialAttack / 180) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.twoStats.twoSpecialAttack-this.state.oneStats.oneSpecialAttack >= 0 ? 
-                      (<span className="plus-stat">{`+${this.state.twoStats.twoSpecialAttack-this.state.oneStats.oneSpecialAttack}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.twoStats.twoSpecialAttack-this.state.oneStats.oneSpecialAttack}</span>)} SA</small>
-                    </div>
-                  </div>
-                </div>
-
-                {/*Special defense stat. Max current stat is 230 so special defense value percentage is 
-                   calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Special Defense
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoSpecialDefense /
-                            230) *
-                            100}%`,
-                          backgroundColor: "#CC3999"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.twoStats.twoSpecialDefense}</small>
-                      </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneSpecialDefense / 230) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.twoStats.twoSpecialDefense-this.state.oneStats.oneSpecialDefense >= 0 ?
-                                                  (<span className="plus-stat">{`+${this.state.twoStats.twoSpecialDefense-this.state.oneStats.oneSpecialDefense}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.twoStats.twoSpecialDefense-this.state.oneStats.oneSpecialDefense}</span>)} SD</small>
-                    </div>
-                  </div>
-                </div>
-
-                {/*Speed stat. Max current stat is 180 so speed value percentage is 
-                   calculated from that maximum */}
-                <div className="row align-items-center">
-                  <div className="col-12 col-md-4 col-sm-6 text-right">
-                    Speed
-                  </div>
-                  <div className="col-12 col-md-8 col-sm-6">
-                    <div className="progress wrapper">
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.twoStats.twoSpeed / 180) *
-                            100}%`,
-                          backgroundColor: "darkBlue"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small>{this.state.twoStats.twoSpeed}</small>
-                      </div>
-                      <div
-                        className="progress-bar internal-bar"
-                        role="progressBar"
-                        style={{
-                          width: `${(this.state.oneStats.oneSpeed / 180) *
-                            100}%`,
-                          backgroundColor: "transparent"
-                        }}
-                        aria-valuenow="25"
-                        aria-valuemin="0"
-                        aria-valuemax="100"
-                      >
-                        <small style={{color:"transparent"}}>.</small>
-                        <div className="stat-bar"></div>
-                      </div>
-                      <small className="stat-difference">{this.state.twoStats.twoSpeed-this.state.oneStats.oneSpeed >= 0 ?
-                       (<span className="plus-stat">{`+${this.state.twoStats.twoSpeed-this.state.oneStats.oneSpeed}`}</span>)
-                                                         : (<span className="minus-stat">{this.state.twoStats.twoSpeed-this.state.oneStats.oneSpeed}</span>)} Spe</small>
-                    </div>
-                  </div>
-                </div>
-                <div className="row align-items-center mt-3">
-                  <Link to={`/pokemon/${this.state.twoPokemonIndex}`} className="mx-auto">
-                    View more information for {" "}
-                    {this.state.twoName
-                      .toLowerCase()
-                      .split(" ")
-                      .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")}{" "}
-                    
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          <hr />
+          <Link to="/">Return to home</Link>
         </div>
-        
-      </div>
-      
-    );
-                    }
-                    else
-                    return(
-                      <div className="text-center">
-<div>The Pokemon for comparison was not found. Please ensure the spelling or dex number is correct</div>
-<hr />
-<Link to="/">Return to home</Link>
-</div>
-                    );
+      );
   }
 }

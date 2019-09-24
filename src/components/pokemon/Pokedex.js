@@ -3,24 +3,21 @@ import axios from "axios";
 
 import PokemonCard from "./PokemonCard";
 
-
-
 export default class Pokedex extends Component {
   state = {
-    url: '',
+    url: "",
     pokemon: null
   };
-  
 
   async componentDidMount() {
-    const {pokedex} = this.props.match.params;
+    const { pokedex } = this.props.match.params;
     const url = `https://pokeapi.co/api/v2/pokemon?${pokedex}`;
     const res = await axios.get(url);
     this.setState({ pokemon: res.data["results"] });
   }
 
   async componentDidUpdate() {
-    const {pokedex} = this.props.match.params;
+    const { pokedex } = this.props.match.params;
     const url = `https://pokeapi.co/api/v2/pokemon?${pokedex}`;
     const res = await axios.get(url);
     this.setState({ pokemon: res.data["results"] });
@@ -28,7 +25,7 @@ export default class Pokedex extends Component {
 
   render() {
     return (
-        <React.Fragment>
+      <React.Fragment>
         {this.state.pokemon ? (
           <div className="row">
             {this.state.pokemon.map(pokemon => (
@@ -36,7 +33,6 @@ export default class Pokedex extends Component {
                 key={pokemon.name}
                 name={pokemon.name}
                 url={pokemon.url}
-                
               />
             ))}
           </div>
@@ -44,7 +40,6 @@ export default class Pokedex extends Component {
           <h1>Loading Pokemon</h1>
         )}
       </React.Fragment>
-   
     );
   }
 }

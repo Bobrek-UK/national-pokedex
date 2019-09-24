@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 import styled from "styled-components";
@@ -35,7 +36,7 @@ const StyledLink = styled(Link)`
   }
 `;
 
-export default class PokemonCard extends Component {
+export default class PokemonCardFavourite extends Component {
   state = {
     name: "",
     imageUrl: "",
@@ -45,9 +46,10 @@ export default class PokemonCard extends Component {
     tooManyRequests: false
   };
 
-  componentDidMount() {
-    const { name, url } = this.props;
-    const pokemonIndex = url.split("/")[url.split("/").length - 2];
+  async componentDidMount() {
+    const { favourites } = this.props;
+    const pokemonIndex = favourites.split("&")[0];
+    const name = favourites.split("&")[1];
     const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemonIndex}.png?raw=true`; //address taken from pokemon api
     const shinyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${pokemonIndex}.png?raw=true`; //address taken from pokemon api
 

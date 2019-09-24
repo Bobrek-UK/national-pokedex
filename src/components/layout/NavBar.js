@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import styled from "styled-components";
+
 import { Link } from "react-router-dom";
 
 export default class NavBar extends Component {
@@ -21,7 +21,7 @@ export default class NavBar extends Component {
           <Link className="navbar-brand dex" to="/pokedex/offset=540&limit=90">541-630</Link>
           <Link className="navbar-brand dex" to="/pokedex/offset=630&limit=90">631-720</Link>
           <Link className="navbar-brand dex" to="/pokedex/offset=720&limit=87">721-807</Link>
-          <Link className="navbar-brand" to="/favourites">Favourites</Link>
+          <Link className="navbar-brand dex" style={{marginLeft: "20px"}} to="/favourites">Favourites</Link>
           </div>
         </nav>
       </div>
