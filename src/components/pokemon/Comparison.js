@@ -59,10 +59,8 @@ export default class Comparison extends Component {
 
     //urls for poke info for first pokemon being compared
     const onePokemonUrl = `https://pokeapi.co/api/v2/pokemon/${onePokemonIndex}/`;
-    const onePokemonSpeciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${onePokemonIndex}/`;
     //urls for poke info for second pokemon being compared
     const twoPokemonUrl = `https://pokeapi.co/api/v2/pokemon/${twoPokemonIndex}/`;
-    const twoPokemonSpeciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${twoPokemonIndex}/`;
 
     //get pokemon info for first pokemon being compared
     const onePokemonRes = await axios.get(onePokemonUrl);
@@ -73,6 +71,8 @@ export default class Comparison extends Component {
     const oneName = onePokemonRes.data.name;
     const oneImageUrl = onePokemonRes.data.sprites.front_default;
     const oneTypes = onePokemonRes.data.types.map(type => type.type.name);
+    //this returns the dex number of the pokemon if the comparison was done by the user entering the pokemon's name rather than dex number
+    const twoPokemonIndexToNumber = twoPokemonRes.data.species.url.replace(/[^0-9]/g, '').substring(1);
 
     let {
       oneHp,
@@ -146,6 +146,7 @@ export default class Comparison extends Component {
     this.setState({
       onePokemonIndex,
       twoPokemonIndex,
+      twoPokemonIndexToNumber,
       oneName,
       twoName,
       oneImageUrl,
@@ -172,9 +173,13 @@ export default class Comparison extends Component {
   }
 
   render() {
+    if (this.state.twoName != "")
+    {
     return (
+      
       <div className="col">
         {/*Start of card for first pokemon */}
+        
         <div className="card">
           <div className="card-header">
             <div className="row">
@@ -522,11 +527,11 @@ export default class Comparison extends Component {
           <div className="card-header">
             <div className="row">
               <h3 className="mx-auto">
-                {this.state.twoPokemonIndex.length == 1
-                  ? "00" + this.state.twoPokemonIndex
-                  : this.state.twoPokemonIndex.length == 2
-                  ? "0" + this.state.twoPokemonIndex
-                  : this.state.twoPokemonIndex}
+                {this.state.twoPokemonIndexToNumber.length == 1
+                  ? "00" + this.state.twoPokemonIndexToNumber
+                  : this.state.twoPokemonIndexToNumber.length == 2
+                  ? "0" + this.state.twoPokemonIndexToNumber
+                  : this.state.twoPokemonIndexToNumber}
                 :{" "}
                 {this.state.twoName
                   .toLowerCase()
@@ -858,7 +863,18 @@ export default class Comparison extends Component {
             </div>
           </div>
         </div>
+        
       </div>
+      
     );
+                    }
+                    else
+                    return(
+                      <div className="text-center">
+<div>The Pokemon for comparison was not found. Please ensure the spelling or dex number is correct</div>
+<hr />
+<Link to="/">Return to home</Link>
+</div>
+                    );
   }
 }

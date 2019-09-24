@@ -9,6 +9,7 @@ import Dashboard from "./components/layout/Dashboard";
 import Pokemon from './components/pokemon/Pokemon';
 import Comparison from './components/pokemon/Comparison';
 import Pokedex from './components/pokemon/Pokedex';
+import Favourites from './components/pokemon/Favourites';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route exact path="/pokemon/:pokemonIndex" component={Pokemon} />
         <Route exact path="/comparison/:pokemonIndex" component={Comparison} />
         <Route exact path="/pokedex/:pokedex" component={Pokedex} />
+        <Route exact path="/favourites/" component={Favourites} />
       <Dashboard/>
       </Switch>
       </div>

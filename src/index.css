@@ -64,3 +64,38 @@ code {
 .minus-stat {
   color:red;
 }
+
+.compare-button {
+  border: 1px solid #ef5350;
+  border-radius:10px;
+  padding: 5px;
+  font-weight:bold;
+  color:white;
+  background-color:#ef5350;
+}
+
+.compare-button:hover{
+  text-decoration: none !important;
+  background-color:red;
+  color:white;
+  
+}
+
+.favourite-button{
+  background-color: #ef5350;
+  border-radius:10px;
+  padding: 5px;
+  border: 1px solid white;
+  color:white;
+  font-weight:bold;
+}
+
+.favourite-button:hover{
+  text-decoration: none !important;
+  background-color:red;
+  color:white;
+}
+
+.favourite-button:focus{
+  outline-width:0;
+}

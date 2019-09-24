@@ -48,11 +48,17 @@ export default class Pokemon extends Component {
     genderRatioMale: "",
     genderRatioFemale: "",
     evs: "",
-    hatchSteps: ""
+    hatchSteps: "",
+    compareId: "error",
+    favourites: [],
+    pokemonInFavourites: false
   };
 
   async componentDidMount() {
     const { pokemonIndex } = this.props.match.params;
+
+    var favourites = [];
+    favourites = JSON.parse(localStorage.getItem("favourites"));
 
     //urls for poke info
     const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonIndex}/`;
@@ -133,7 +139,6 @@ export default class Pokemon extends Component {
           description = flavor.flavor_text;
           return;
         }
-        
       });
 
       const femaleRate = res.data["gender_rate"];
@@ -160,7 +165,8 @@ export default class Pokemon extends Component {
         genderRatioMale,
         catchRate,
         eggGroups,
-        hatchSteps
+        hatchSteps,
+        favourites
       });
     });
 
@@ -187,6 +193,10 @@ export default class Pokemon extends Component {
     });
   }
 
+  handleChange(event) {
+    this.setState({ compareId: event.target.value });
+  }
+
   render() {
     return (
       <div className="col">
@@ -206,10 +216,9 @@ export default class Pokemon extends Component {
                   .map(s => s.charAt(0).toUpperCase() + s.substring(1))
                   .join(" ")}
               </h3>
-            
+
               {this.state.types.map(type => (
-               
-                <span 
+                <span
                   key={type}
                   className="badge badge-primary badge-pill mr-2 float-right"
                   style={{
@@ -219,20 +228,22 @@ export default class Pokemon extends Component {
                     paddingTop: "6px"
                   }}
                 >
-                  <h5>{type.charAt(0).toUpperCase() +
-                    type.substring(1).toLowerCase()}
-                    </h5>
+                  <h5>
+                    {type.charAt(0).toUpperCase() +
+                      type.substring(1).toLowerCase()}
+                  </h5>
                 </span>
               ))}
             </div>
           </div>
           <div className="card-body">
             <div className="row align-items-top">
-              <div className="col-3"
-              style={{
-                borderRight: "1px solid #c2c2c2",
-                
-              }}>
+              <div
+                className="col-3"
+                style={{
+                  borderRight: "1px solid #c2c2c2"
+                }}
+              >
                 <img
                   src={this.state.imageUrl}
                   className="card-img-top rounded mx-auto mt-2"
@@ -252,15 +263,55 @@ export default class Pokemon extends Component {
               </div>
 
               <div className="col-9">
+                <hr />
                 <div className="row mt-1">
-                  <div className="col"
-                  style={{
-                    textAlign: "center"
-                  }}>
-                    <p>{this.state.description.replace(/[^a-zA-Z0-9 ,.éÉ]/g, ' ')}</p>
+                  <div
+                    className="col"
+                    style={{
+                      textAlign: "center"
+                    }}
+                  >
+                    
+                    <p>
+                      {this.state.description.replace(
+                        /[^a-zA-Z0-9 ,.éÉ]/g,
+                        " "
+                      )}
+                    </p>
+
+                    {this.state.favourites.indexOf(this.state.pokemonIndex)===-1 ? (
+                    <button className="favourite-button"
+                      onClick={() => {
+                        var favouritesExpander = this.state.favourites || [];
+                        favouritesExpander.push(this.state.pokemonIndex);
+                        localStorage.setItem(
+                          "favourites",
+                          JSON.stringify(favouritesExpander)
+                        );
+                        this.setState({pokemonInFavourites: true});
+                      }}
+                    >
+                     Add this Pokemon to favourites
+                    </button>
+                    ) : (<button className="favourite-button"
+                      onClick={() => {
+                        var favouritesRemover = this.state.favourites || [];
+                        var removalIndex = favouritesRemover.indexOf(this.state.pokemonIndex)
+                        favouritesRemover.splice(removalIndex, 1);
+                        localStorage.setItem(
+                          "favourites",
+                          JSON.stringify(favouritesRemover)
+                        );
+                        this.setState({pokemonInFavourites: false});
+                      }}
+                    >
+                      Remove this Pokemon from favourites
+                    </button>)
+                    }
                   </div>
                 </div>
-                <hr />
+                 <hr />
+                 <br />
                 <div className="text-center mx-auto mb-4">
                   <h4 className="mx-auto">
                     Base stats for{" "}
@@ -357,8 +408,9 @@ export default class Pokemon extends Component {
                         className="progress-bar"
                         role="progressBar"
                         style={{
-                          width: `${(this.state.stats.specialAttack / 180) * 100}%`,
-                            backgroundColor: "purple"
+                          width: `${(this.state.stats.specialAttack / 180) *
+                            100}%`,
+                          backgroundColor: "purple"
                         }}
                         aria-valuenow="25"
                         aria-valuemin="0"
@@ -384,7 +436,7 @@ export default class Pokemon extends Component {
                         style={{
                           width: `${(this.state.stats.specialDefense / 230) *
                             100}%`,
-                            backgroundColor: "#CC3999"
+                          backgroundColor: "#CC3999"
                         }}
                         aria-valuenow="25"
                         aria-valuemin="0"
@@ -420,14 +472,41 @@ export default class Pokemon extends Component {
                     </div>
                   </div>
                 </div>
+
+                <hr />
                 <div className="row align-items-center mt-3">
-                  <Link to={`/comparison/3v6`} 
-                  className="mx-auto">Compare {this.state.name
+                  <div
+                    className="mx-auto text-center"
+                    style={{ paddingLeft: "20px", paddingRight: "20px" }}
+                  >
+                    Please enter the name or Pokedex number of Pokemon to
+                    compare
+                  </div>
+                </div>
+                <div className="row align-items-center mt-3">
+                  <input
+                    type="text"
+                    className="mx-auto text-right"
+                    id="compareId"
+                    defaultValue=""
+                    onChange={this.handleChange.bind(this)}
+                  ></input>
+                </div>
+                <div className="row align-items-center mt-3">
+                  <Link
+                    to={`/comparison/${this.state.pokemonIndex}v${this.state.compareId}`}
+                    className="mx-auto compare-button"
+                  >
+                    Compare{" "}
+                    {this.state.name
                       .toLowerCase()
                       .split(" ")
                       .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} with another Pokemon</Link>
+                      .join(" ")}{" "}
+                    with this Pokemon
+                  </Link>
                 </div>
+                <hr />
               </div>
             </div>
           </div>
