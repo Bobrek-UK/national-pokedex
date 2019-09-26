@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
+
+
 const TYPE_COLORS = {
   bug: "B1C12E",
   dark: "4F3A2D",
@@ -58,10 +60,11 @@ export default class Pokemon extends Component {
   };
 
   async componentDidMount() {
+    
     const { pokemonIndex } = this.props.match.params;
     const previousIndex = pokemonIndex - 1;
     const nextIndex = pokemonIndex - -1;
-
+    
     var favourites = [];
     favourites = JSON.parse(localStorage.getItem("favourites")) || [];
 
@@ -204,6 +207,8 @@ export default class Pokemon extends Component {
   handleChange(event) {
     this.setState({ compareId: event.target.value });
   }
+
+ 
 
   render() {
     return (
@@ -611,6 +616,7 @@ export default class Pokemon extends Component {
                     <Link
                       to={`/pokemonScroll/${this.state.previousIndex}`}
                       className="mx-auto compare-button"
+                      
                     >
                       View Previous Pokemon
                     </Link>
